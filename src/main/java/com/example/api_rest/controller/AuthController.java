@@ -4,19 +4,15 @@ import com.example.api_rest.api.UserRepository;
 import com.example.api_rest.model.AuthenticationRequest;
 import com.example.api_rest.model.AuthenticationResponse;
 import com.example.api_rest.util.JwtUtil;
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(value = "*")
 public class AuthController {
 
     @Autowired
@@ -24,10 +20,6 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUntil;
-
 
     @PostMapping("/auth")
     private ResponseEntity<?> authenticateClient(@RequestBody AuthenticationRequest authenticationRequest)
@@ -41,7 +33,7 @@ public class AuthController {
             return new ResponseEntity<>("Error during client Authentication " + username, HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(new AuthenticationResponse("Successful Authentication for client: " + jwtUntil.generateToken(username)));
+        return ResponseEntity.ok(new AuthenticationResponse("Successful Authentication for client: " + username));
     }
 
     @GetMapping("/index")
