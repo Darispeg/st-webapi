@@ -1,43 +1,45 @@
-package com.example.api_rest;
+package com.example.api_rest.configurations;
 
+import com.example.api_rest.service.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    String[] resource = new String[]{
-            "/include/**", "/css/**", "/icons/**", "/img/**", "/js/**", "/layer/**"
-    };
+    @Autowired
+    private UserSecurityService securityService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception
+    {
+        auth.userDetailsService(securityService);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http
-                .authorizeRequests()
-                .antMatchers(resource).permitAll()
-                .antMatchers("/api/v1/*", "/api/v1/users/*").permitAll()
-                .anyRequest().authenticated()
+        http.csrf().disable().authorizeRequests().antMatchers("/auth")
+                .permitAll().anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/api/v1/users/login")
                 .permitAll()
-                .defaultSuccessUrl("/api/v1/roles")
-                .failureUrl("/api/v1/users/login?error=true")
+                .defaultSuccessUrl("/index")
+                .failureUrl("/login?error=true")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and()
                 .csrf().disable()
                 .logout()
                 .permitAll()
-                .logoutSuccessUrl("/api/v1/users/login?logout");
+                .logoutSuccessUrl("/login?logout");;
     }
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -48,11 +50,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return bCryptPasswordEncoder;
     }
 
-    @Autowired
-    UserDetailsService userDetailsService;
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        //Specify the person in charge of the Login and Password Encryption
+        auth.userDetailsService(securityService).passwordEncoder(passwordEncoder());
     }
 }

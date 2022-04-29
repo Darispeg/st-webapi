@@ -2,7 +2,7 @@ package com.example.api_rest.controller;
 
 import java.util.List;
 
-import com.example.api_rest.Model.Role;
+import com.example.api_rest.db.entities.Role;
 import com.example.api_rest.service.role.RoleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
