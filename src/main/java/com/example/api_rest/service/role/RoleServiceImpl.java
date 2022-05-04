@@ -2,7 +2,7 @@ package com.example.api_rest.service.role;
 
 import java.util.UUID;
 
-import com.example.api_rest.Model.Role;
+import com.example.api_rest.db.entities.Role;
 import com.example.api_rest.api.RoleRepository;
 
 import com.example.api_rest.service.GenericServiceImpl;
@@ -26,5 +26,5 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, UUID> implements R
         role.setKey(UUID.randomUUID());
         return getDao().save(role);
     }
-    
+
 }
