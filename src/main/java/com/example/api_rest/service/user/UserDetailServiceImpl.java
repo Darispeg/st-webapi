@@ -1,6 +1,5 @@
 package com.example.api_rest.service.user;
 
-import com.example.api_rest.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.User;
