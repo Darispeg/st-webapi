@@ -1,6 +1,5 @@
 package com.example.api_rest.configurations;
 
-import com.example.api_rest.filter.JwtFilter;
 import com.example.api_rest.service.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

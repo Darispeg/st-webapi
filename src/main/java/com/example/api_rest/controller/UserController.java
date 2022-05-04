@@ -57,11 +57,11 @@ public class UserController {
 
         if (obj.isPresent())
         {
-            obj.get().setFullName(updateObj.getFullName());
+            obj.get().setFullname(updateObj.getFullName());
             obj.get().setPhone(updateObj.getPhone());
             obj.get().setAddress(updateObj.getAddress());
             obj.get().setEmail(updateObj.getEmail());
-            obj.get().setFullName(updateObj.getFullName());
+            obj.get().setFullname(updateObj.getFullName());
             obj.get().setStatus(updateObj.getStatus());
 
             User modified = _userService.update(obj.get());

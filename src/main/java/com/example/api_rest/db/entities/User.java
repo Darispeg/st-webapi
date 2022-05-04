@@ -21,7 +21,7 @@ public class User {
     private UUID key;
 
     @Field
-    private String fullName;
+    private String fullname;
 
     @Field
     private String username;
@@ -59,7 +59,7 @@ public class User {
 
     public User(String fullName, String username, String email, String password, String phone, String address)
     {
-        this.fullName = fullName;
+        this.fullname = fullName;
         this.username = username;
         this.email = email;
         this.password = password;
