@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user)
     {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/save").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/save").toUriString());
         return ResponseEntity.created(uri).body(_userService.saveUser(user));
     }
 
@@ -79,9 +79,9 @@ public class UserController {
         if (obj.isPresent())
         {
             _userService.delete(key);
-            return new ResponseEntity<>("Usuario Eliminado Correctamente", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Event deleted successfully", HttpStatus.NO_CONTENT);
         }
         else
-            return new ResponseEntity<>( "Usuario no encontrado", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( "Event not found", HttpStatus.BAD_REQUEST);
     }
 }

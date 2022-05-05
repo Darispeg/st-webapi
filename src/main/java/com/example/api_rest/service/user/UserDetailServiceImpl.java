@@ -24,7 +24,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 
-        com.example.api_rest.Model.User appUser =
+        com.example.api_rest.db.entities.User appUser =
                 userService.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Login Username Invalido"));
 
 
