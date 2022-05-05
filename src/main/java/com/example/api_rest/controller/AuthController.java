@@ -3,7 +3,6 @@ package com.example.api_rest.controller;
 import com.example.api_rest.api.UserRepository;
 import com.example.api_rest.model.AuthenticationRequest;
 import com.example.api_rest.model.AuthenticationResponse;
-import com.example.api_rest.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(value = "*")
 public class AuthController {
 
     @Autowired

@@ -17,7 +17,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
-@CrossOrigin(value = "*")
 public class UserController {
 
     @Autowired

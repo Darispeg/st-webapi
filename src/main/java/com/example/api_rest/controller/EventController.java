@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/v1/events")
-@CrossOrigin(value = "*")
 public class EventController {
 
     @Autowired

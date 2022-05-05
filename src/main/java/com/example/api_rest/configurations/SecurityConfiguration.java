@@ -1,5 +1,6 @@
 package com.example.api_rest.configurations;
 
+import com.example.api_rest.filter.CorsFilter;
 import com.example.api_rest.service.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.SessionManagementFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,22 +26,36 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(securityService);
     }
 
+    @Bean
+    CorsFilter corsFilter() {
+        CorsFilter filter = new CorsFilter();
+        return filter;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.csrf().disable().authorizeRequests().antMatchers("/auth")
-                .permitAll().anyRequest().authenticated()
-                .and()
+        http
+                .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
                 .formLogin()
-                .permitAll()
                 .defaultSuccessUrl("/index")
                 .failureUrl("/login?error=true")
-                .usernameParameter("username")
+                .loginProcessingUrl("/auth")
                 .passwordParameter("password")
+                .usernameParameter("username")
+                .and()
+                .logout()
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
                 .and()
                 .csrf().disable()
-                .logout()
-                .permitAll()
-                .logoutSuccessUrl("/login?logout");
+                .anonymous().disable()
+                .authorizeRequests()
+                .antMatchers("/auth").permitAll()
+                .antMatchers("/oauth/token").permitAll()
+                .antMatchers("/admin/*").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("api/v1/users/*").access("hasRole('ROLE_USER')");
     }
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
