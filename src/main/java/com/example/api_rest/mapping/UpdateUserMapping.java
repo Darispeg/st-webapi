@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class UpdateUserMapping
 {
-    private String fullName;
+    private String fullname;
     private String username;
     private String phone;
     private String address;

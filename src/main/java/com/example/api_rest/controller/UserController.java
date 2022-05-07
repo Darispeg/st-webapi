@@ -48,7 +48,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
     @PutMapping(value = "/{key}")
     public ResponseEntity<User> update(@PathVariable UUID key, @RequestBody UpdateUserMapping updateObj)
     {
@@ -56,11 +55,11 @@ public class UserController {
 
         if (obj.isPresent())
         {
-            obj.get().setFullname(updateObj.getFullName());
+            obj.get().setFullname(updateObj.getFullname());
             obj.get().setPhone(updateObj.getPhone());
             obj.get().setAddress(updateObj.getAddress());
             obj.get().setEmail(updateObj.getEmail());
-            obj.get().setFullname(updateObj.getFullName());
+            obj.get().setFullname(updateObj.getFullname());
             obj.get().setStatus(updateObj.getStatus());
 
             User modified = _userService.update(obj.get());
