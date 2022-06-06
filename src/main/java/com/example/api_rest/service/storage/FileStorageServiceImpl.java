@@ -27,7 +27,7 @@ public class FileStorageServiceImpl  implements FileStorageService{
             Files.createDirectory(root);
         } catch (IOException ex)
         {
-            throw new RuntimeException("Could not initialize folder for upload!");
+            throw new RuntimeException("Could not initialize folder for upload! ");
         }
     }
 
