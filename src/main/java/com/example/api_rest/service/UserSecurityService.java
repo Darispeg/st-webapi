@@ -29,10 +29,8 @@ public class UserSecurityService implements UserDetailsService {
         String name = foundedByUsername.getUsername();
         String pwd = foundedByUsername.getPassword();
         Set grantList = new HashSet();
-        for (Role role : foundedByUsername.getRoles()) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role.getDescription());
-            grantList.add(grantedAuthority);
-        }
+        grantList.add(foundedByUsername.getRole().getDescription());
+
         return new org.springframework.security.core.userdetails.User(name, pwd, grantList);
     }
 }

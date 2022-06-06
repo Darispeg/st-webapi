@@ -71,7 +71,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UUID> implements U
     public void addRoleToUser(UUID userId, UUID roleId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Role> role = roleRepository.findById(roleId);
-        user.get().getRoles().add(role.get());
+        user.get().setRole(role.get());
         userRepository.save(user.get());
     }
 }

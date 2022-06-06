@@ -52,7 +52,7 @@ public class User {
     private LocalDateTime lastModifiedDate;
 
     @Field
-    private Collection<Role> roles;
+    private Role role;
 
     @Field
     private String status;

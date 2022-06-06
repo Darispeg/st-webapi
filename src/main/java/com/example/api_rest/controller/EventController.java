@@ -3,12 +3,15 @@ package com.example.api_rest.controller;
 import com.example.api_rest.db.entities.Event;
 import com.example.api_rest.db.entities.Ticket;
 import com.example.api_rest.mapping.UpdateEventMapping;
+import com.example.api_rest.model.ResponseMessage;
 import com.example.api_rest.service.event.EventService;
+import com.example.api_rest.service.storage.FileStorageService;
 import com.example.api_rest.service.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -19,6 +22,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/api/v1/events")
 public class EventController {
+
+    @Autowired
+    private FileStorageService storageService;
 
     @Autowired
     private EventService _eventService;
@@ -60,6 +66,7 @@ public class EventController {
             obj.get().setCategory(updateObj.getCategory());
             obj.get().setStatus(updateObj.getStatus());
             obj.get().setDateTime(updateObj.getDateTime());
+            obj.get().setLocation(updateObj.getLocation());
 
             Event modified = _eventService.update(obj.get());
             return ResponseEntity.ok(modified);
@@ -104,6 +111,29 @@ public class EventController {
         else
         {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{eventKey}/upload")
+    public ResponseEntity<ResponseMessage> uploadFile(@PathVariable UUID eventKey, @RequestParam("file") MultipartFile file) {
+        String message = "";
+        try {
+            String fileKey = storageService.save(file);
+
+            Optional<Event> event = Optional.ofNullable(_eventService.findById(eventKey));
+
+            if (event.isPresent())
+            {
+                String path = "http://localhost:8090/api/v1/files/" + fileKey;
+                event.get().setUrlImage(path);
+                Event modified = _eventService.update(event.get());
+            }
+
+            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
 }

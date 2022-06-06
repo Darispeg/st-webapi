@@ -6,6 +6,6 @@ import java.util.UUID;
 
 @Getter
 public class AddRoleUserMapping {
-    private UUID userId;
-    private UUID roleId;
+    private UUID userKey;
+    private UUID roleKey;
 }

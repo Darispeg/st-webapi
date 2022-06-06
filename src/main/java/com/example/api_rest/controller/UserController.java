@@ -41,11 +41,11 @@ public class UserController {
         return ResponseEntity.created(uri).body(_userService.saveUser(user));
     }
 
-    @PostMapping("/roles")
-    public ResponseEntity<String> addRoleToUSer(@RequestBody AddRoleUserMapping userRole)
+    @PutMapping("/role")
+    public ResponseEntity<String> addRoleToUser(@RequestBody AddRoleUserMapping addRoleToUser)
     {
-        _userService.addRoleToUser(userRole.getUserId(), userRole.getRoleId());
-        return ResponseEntity.ok().build();
+        _userService.addRoleToUser(addRoleToUser.getUserKey(), addRoleToUser.getRoleKey());
+        return new ResponseEntity<>("Change Role to User successfully", HttpStatus.OK);
     }
 
     @PutMapping(value = "/{key}")

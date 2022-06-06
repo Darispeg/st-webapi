@@ -50,6 +50,9 @@ public class Event {
     @Field
     private String status;
 
+    @Field
+    private String urlImage;
+
     //region Audit
 
     @Field
