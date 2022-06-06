@@ -1,16 +1,23 @@
 package com.example.api_rest.controller;
 
 import com.example.api_rest.api.UserRepository;
-import com.example.api_rest.model.AuthenticationRequest;
-import com.example.api_rest.model.AuthenticationResponse;
+import com.example.api_rest.configurations.jwt.TokenProvider;
+import com.example.api_rest.db.entities.User;
+import com.example.api_rest.model.AuthToken;
+import com.example.api_rest.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequestMapping
 public class AuthController {
 
     @Autowired
@@ -19,25 +26,37 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/auth")
-    private ResponseEntity<?> authenticateClient(@RequestBody AuthenticationRequest authenticationRequest)
-    {
-        String username = authenticationRequest.getUsername();
-        String password = authenticationRequest.getPassword();
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        }catch (Exception ex){
-            return new ResponseEntity<>("Error during client Authentication " + username, HttpStatus.BAD_REQUEST);
-        }
+    @Autowired
+    private TokenProvider jwtTokenUtil;
 
-        return ResponseEntity.ok(new AuthenticationResponse("Successful Authentication for client: " + username));
+    @PostMapping(value = "/auth")
+    public ResponseEntity<?> generateToken(@RequestBody LoginUser loginUser) throws AuthenticationException {
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginUser.getUsername(),
+                        loginUser.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final String token = jwtTokenUtil.generateToken(authentication);
+        return ResponseEntity.ok(new AuthToken(token));
     }
 
-    @GetMapping("/index")
-    public String index()
-    {
-        return "Welcome to the Ticket System";
+    @PostMapping(value="/register")
+    public User saveUser(@RequestBody User user){
+        return userRepository.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value="/adminping")
+    public String adminPing(){
+        return "Only Admins Can Read This";
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping(value="/userping")
+    public String userPing(){
+        return "Any User Can Read This";
+    }
 }

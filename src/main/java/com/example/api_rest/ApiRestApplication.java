@@ -1,9 +1,15 @@
 package com.example.api_rest;
 
+import com.example.api_rest.api.UserRepository;
+import com.example.api_rest.db.entities.User;
 import com.example.api_rest.service.storage.FileStorageService;
+import com.example.api_rest.service.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 
@@ -22,16 +28,15 @@ public class ApiRestApplication implements CommandLineRunner {
 		//storageService.init();
 	}
 
-	/*@Bean
-	CommandLineRunner run(UserService userService, RoleService roleService)
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
+
+	@Bean
+	CommandLineRunner run(UserRepository repository)
 	{
 		return args -> {
-			User user = new User("Rick Sanchez", "Rick", "rick@gmail.com", "12345", "79752455", "Juliana Arias");
-			List roles = new ArrayList<>();
-			roles.add(new Role(null, "ROLE_USER", "usuario"));
-			roles.add(new Role(null, "ROLE_ADMIN", "administrador"));
-			user.setRoles(roles);
-			userService.saveUser(user);
+			User user = repository.findByUsername("Rick");
+			System.out.println(passwordEncoder.matches("12345", user.getPassword()));
 		};
-	}*/
+	}
 }

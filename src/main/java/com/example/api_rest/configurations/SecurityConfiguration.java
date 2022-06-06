@@ -1,69 +1,57 @@
 package com.example.api_rest.configurations;
 
-import com.example.api_rest.filter.CorsFilter;
+import com.example.api_rest.configurations.jwt.JwtAuthenticationFilter;
+import com.example.api_rest.configurations.jwt.UnauthorizedEntryPoint;
 import com.example.api_rest.service.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserSecurityService securityService;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception
-    {
-        auth.userDetailsService(securityService);
-    }
-
-    @Bean
-    CorsFilter corsFilter() {
-        CorsFilter filter = new CorsFilter();
-        return filter;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception{
-        http
-                .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
-                .formLogin()
-                .defaultSuccessUrl("/index")
-                .failureUrl("/login?error=true")
-                .loginProcessingUrl("/auth")
-                .passwordParameter("password")
-                .usernameParameter("username")
-                .and()
-                .logout()
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true)
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .and()
-                .csrf().disable()
-                .anonymous().disable()
-                .authorizeRequests()
-                .antMatchers("/auth").permitAll()
-                .antMatchers("/oauth/token").permitAll()
-                .antMatchers("/admin/*").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("api/v1/users/*").access("hasRole('ROLE_USER')");
-    }
+    @Autowired
+    private UnauthorizedEntryPoint unauthorizedEntryPoint;
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder encoder(){
         bCryptPasswordEncoder = new BCryptPasswordEncoder(4);
         return bCryptPasswordEncoder;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception
+    {
+        auth.userDetailsService(securityService).passwordEncoder(encoder());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception{
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/auth").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -72,9 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-        //Specify the person in charge of the Login and Password Encryption
-        auth.userDetailsService(securityService).passwordEncoder(passwordEncoder());
+    @Bean
+    public JwtAuthenticationFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationFilter();
     }
 }
