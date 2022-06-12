@@ -34,12 +34,6 @@ public class Ticket {
     private int available;
 
     @Field
-    private LocalDateTime  startDate;
-
-    @Field
-    private LocalDateTime finishDate;
-
-    @Field
     private List<AdditionalInformation> additionalInformation;
 
     @Field
