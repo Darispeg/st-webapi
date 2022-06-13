@@ -43,7 +43,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UUID> implements U
         String encodePassword = bCryptPasswordEncoder.encode(obj.getPassword());
         obj.setPassword(encodePassword);
 
-        obj.setRole(new Role("empty", "SIN ROL"));
+        obj.setRole(new Role( UUID.randomUUID(), "empty", "SIN ROL"));
 
         obj.setCreatedDate(LocalDateTime.now());
         return getDao().save(obj);
