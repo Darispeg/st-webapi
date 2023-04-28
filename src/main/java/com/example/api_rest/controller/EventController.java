@@ -92,8 +92,8 @@ public class EventController {
 
             if (event.isPresent())
             {
-                URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/files/" + fileKey).toUriString());
-                event.get().setUrlImage(uri.toString());
+                String path = "https://app-cabrera.herokuapp.com/api/v1/files/" + fileKey;
+                event.get().setUrlImage(path);
                 Item modified = _eventService.update(event.get());
             }
 
