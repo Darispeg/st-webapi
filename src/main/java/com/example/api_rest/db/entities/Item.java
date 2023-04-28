@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
-public class Event {
+public class Item {
 
     @Id
     @Field("_id")
@@ -33,19 +33,13 @@ public class Event {
     private String description;
 
     @Field
-    private String address;
+    private float price;
 
     @Field
-    private String city;
+    private String unitOfMeasurement;
 
     @Field
-    private String phone;
-
-    @Field
-    private String location;
-
-    @Field
-    private LocalDateTime dateTime;
+    private int stock;
 
     @Field
     private String status;

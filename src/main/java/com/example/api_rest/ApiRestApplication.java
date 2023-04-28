@@ -4,6 +4,9 @@ import com.example.api_rest.service.storage.FileStorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 
@@ -18,20 +21,15 @@ public class ApiRestApplication implements CommandLineRunner {
 	FileStorageService storageService;
 	@Override
 	public void run(String... arg) throws Exception {
-		//storageService.deleteAll();
-		//storageService.init();
 	}
 
-	/*@Bean
-	CommandLineRunner run(UserService userService, RoleService roleService)
-	{
-		return args -> {
-			User user = new User("Rick Sanchez", "Rick", "rick@gmail.com", "12345", "79752455", "Juliana Arias");
-			List roles = new ArrayList<>();
-			roles.add(new Role(null, "ROLE_USER", "usuario"));
-			roles.add(new Role(null, "ROLE_ADMIN", "administrador"));
-			user.setRoles(roles);
-			userService.saveUser(user);
+	@Bean
+	public WebMvcConfigurer corsConfigure() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("http://localhost:63891").allowedMethods("*").allowedHeaders("*");
+			}
 		};
-	}*/
+	}
 }
