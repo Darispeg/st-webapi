@@ -17,6 +17,10 @@ import org.springframework.security.web.session.SessionManagementFilter;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    String[] resource = new String[]{
+            "/service/**", "../controller/ShoppingCartController", "api/v1/shopping-cart/*"
+    };
+
     @Autowired
     private UserSecurityService securityService;
 
@@ -52,6 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .anonymous().disable()
                 .authorizeRequests()
+                .antMatchers(resource).permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/oauth/token").permitAll()
                 .antMatchers("/admin/*").access("hasRole('ROLE_ADMIN')")

@@ -1,8 +1,7 @@
 package com.example.api_rest.service.event;
 
-import com.example.api_rest.api.EventRepository;
-import com.example.api_rest.db.entities.Event;
-import com.example.api_rest.db.entities.Role;
+import com.example.api_rest.api.ItemRepository;
+import com.example.api_rest.db.entities.Item;
 import com.example.api_rest.service.GenericServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
@@ -12,26 +11,26 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-public class EventServiceImpl extends GenericServiceImpl<Event, UUID> implements EventService{
+public class EventServiceImpl extends GenericServiceImpl<Item, UUID> implements EventService{
 
     @Autowired
-    private EventRepository repository;
+    private ItemRepository repository;
 
     @Override
-    public CrudRepository<Event, UUID> getDao() {
+    public CrudRepository<Item, UUID> getDao() {
         return repository;
     }
 
     @Override
-    public Event saveEvent(Event event) {
-        event.setKey(UUID.randomUUID());
-        event.setCreatedDate(LocalDateTime.now());
-        return getDao().save(event);
+    public Item saveEvent(Item item) {
+        item.setKey(UUID.randomUUID());
+        item.setCreatedDate(LocalDateTime.now());
+        return getDao().save(item);
     }
 
     @Override
-    public Event update(Event event) {
-        event.setLastModifiedDate(LocalDateTime.now());
-        return getDao().save(event);
+    public Item update(Item item) {
+        item.setLastModifiedDate(LocalDateTime.now());
+        return getDao().save(item);
     }
 }

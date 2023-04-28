@@ -1,12 +1,10 @@
 package com.example.api_rest.controller;
 
-import com.example.api_rest.db.entities.Event;
-import com.example.api_rest.db.entities.Ticket;
-import com.example.api_rest.mapping.UpdateEventMapping;
+import com.example.api_rest.db.entities.Item;
+import com.example.api_rest.mapping.UpdateItemMapping;
 import com.example.api_rest.model.ResponseMessage;
 import com.example.api_rest.service.event.EventService;
 import com.example.api_rest.service.storage.FileStorageService;
-import com.example.api_rest.service.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,46 +27,41 @@ public class EventController {
     @Autowired
     private EventService _eventService;
 
-    @Autowired
-    private TicketService _ticketService;
-
     @GetMapping
-    public ResponseEntity<List<Event>> getAll()
+    public ResponseEntity<List<Item>> getAll()
     {
         return ResponseEntity.ok(_eventService.findAll());
     }
 
     @GetMapping(value = "/{key}")
-    public ResponseEntity<Event> getEvent(@PathVariable UUID key)
+    public ResponseEntity<Item> getEvent(@PathVariable UUID key)
     {
         return ResponseEntity.ok(_eventService.findById(key));
     }
 
     @PostMapping
-    public ResponseEntity<Event> save(@RequestBody Event event)
+    public ResponseEntity<Item> save(@RequestBody Item item)
     {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/save").toUriString());
-        return ResponseEntity.created(uri).body(_eventService.saveEvent(event));
+        return ResponseEntity.created(uri).body(_eventService.saveEvent(item));
     }
 
     @PutMapping(value = "/{key}")
-    public ResponseEntity<Event> update(@PathVariable UUID key, @RequestBody UpdateEventMapping updateObj)
+    public ResponseEntity<Item> update(@PathVariable UUID key, @RequestBody UpdateItemMapping updateObj)
     {
-        Optional<Event> obj = Optional.ofNullable(_eventService.findById(key));
+        Optional<Item> obj = Optional.ofNullable(_eventService.findById(key));
 
         if (obj.isPresent())
         {
-            obj.get().setName(updateObj.getName());
-            obj.get().setDescription(updateObj.getDescription());
-            obj.get().setPhone(updateObj.getPhone());
-            obj.get().setAddress(updateObj.getAddress());
-            obj.get().setCity(updateObj.getCity());
-            obj.get().setCategory(updateObj.getCategory());
-            obj.get().setStatus(updateObj.getStatus());
-            obj.get().setDateTime(updateObj.getDateTime());
-            obj.get().setLocation(updateObj.getLocation());
+            Item update = obj.get();
+            update.setName(updateObj.getName());
+            update.setDescription(updateObj.getDescription());
+            update.setCategory(updateObj.getCategory());
+            update.setPrice(updateObj.getPrice());
+            update.setStock(updateObj.getStock());
+            update.setUnitOfMeasurement(updateObj.getUnitOfMeasurement());
 
-            Event modified = _eventService.update(obj.get());
+            Item modified = _eventService.update(update);
             return ResponseEntity.ok(modified);
         }
         else
@@ -78,7 +71,7 @@ public class EventController {
     @DeleteMapping(value = "/{key}")
     public ResponseEntity<String> delete(@PathVariable UUID key)
     {
-        Optional<Event> obj = Optional.ofNullable(_eventService.findById(key));
+        Optional<Item> obj = Optional.ofNullable(_eventService.findById(key));
 
         if (obj.isPresent())
         {
@@ -89,41 +82,19 @@ public class EventController {
             return new ResponseEntity<>( "Event not found", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(value = "{eventKey}/tickets")
-    public ResponseEntity<List<Ticket>> listEventTicket(@PathVariable UUID eventKey)
-    {
-        List<Ticket> listTickets = _ticketService.findByEventKey(eventKey);
-        if (!listTickets.isEmpty())
-            return ResponseEntity.ok(listTickets);
-        else
-            return new ResponseEntity<>( null, HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping(value = "{eventKey}/tickets")
-    public ResponseEntity<Ticket> saveEventTicket(@PathVariable UUID eventKey, @RequestBody Ticket ticket)
-    {
-        Event event = _eventService.findById(eventKey);
-        if (event != null)
-        {
-            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/" + eventKey + "/tickets/save").toUriString());
-            return ResponseEntity.created(uri).body(_ticketService.saveTicket(ticket));
-        }
-        else
-        {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping("/{eventKey}/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@PathVariable UUID eventKey, @RequestParam("file") MultipartFile file) {
         String message = "";
         try {
             String fileKey = storageService.save(file);
 
-            Optional<Event> event = Optional.ofNullable(_eventService.findById(eventKey));
+            Optional<Item> event = Optional.ofNullable(_eventService.findById(eventKey));
 
             if (event.isPresent())
             {
+                String path = "http://localhost:8090/api/v1/files/" + fileKey;
+                event.get().setUrlImage(path);
+                Item modified = _eventService.update(event.get());
                 URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/files/" + fileKey).toUriString());
                 event.get().setUrlImage(uri.toString());
                 Event modified = _eventService.update(event.get());
