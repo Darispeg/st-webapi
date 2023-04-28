@@ -92,12 +92,9 @@ public class EventController {
 
             if (event.isPresent())
             {
-                String path = "http://localhost:8090/api/v1/files/" + fileKey;
-                event.get().setUrlImage(path);
-                Item modified = _eventService.update(event.get());
                 URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/files/" + fileKey).toUriString());
                 event.get().setUrlImage(uri.toString());
-                Event modified = _eventService.update(event.get());
+                Item modified = _eventService.update(event.get());
             }
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
