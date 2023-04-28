@@ -22,5 +22,4 @@ public class Role {
 
     @Field
     private String description;
-
 }
