@@ -47,6 +47,9 @@ public class Item {
     @Field
     private String urlImage;
 
+    @Field
+    private String urlModelAR;
+
     //region Audit
 
     @Field

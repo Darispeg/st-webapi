@@ -1,4 +1,4 @@
-package com.example.api_rest.service.event;
+package com.example.api_rest.service.item;
 
 import com.example.api_rest.api.ItemRepository;
 import com.example.api_rest.db.entities.Item;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-public class EventServiceImpl extends GenericServiceImpl<Item, UUID> implements EventService{
+public class ItemServiceImpl extends GenericServiceImpl<Item, UUID> implements ItemService {
 
     @Autowired
     private ItemRepository repository;

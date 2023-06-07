@@ -3,7 +3,7 @@ package com.example.api_rest.controller;
 import com.example.api_rest.db.entities.Item;
 import com.example.api_rest.mapping.UpdateItemMapping;
 import com.example.api_rest.model.ResponseMessage;
-import com.example.api_rest.service.event.EventService;
+import com.example.api_rest.service.item.ItemService;
 import com.example.api_rest.service.storage.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/v1/events")
-public class EventController {
+public class ItemController {
 
     @Autowired
     private FileStorageService storageService;
 
     @Autowired
-    private EventService _eventService;
+    private ItemService _eventService;
 
     @GetMapping
     public ResponseEntity<List<Item>> getAll()
@@ -94,6 +94,29 @@ public class EventController {
             {
                 String path = "https://app-cabrera.herokuapp.com/api/v1/files/" + fileKey;
                 event.get().setUrlImage(path);
+                Item modified = _eventService.update(event.get());
+            }
+
+            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+    }
+
+    @PostMapping("/{itemKey}/upload-model-ar")
+    public ResponseEntity<ResponseMessage> uploadModel(@PathVariable UUID itemKey, @RequestParam("file") MultipartFile file) {
+        String message = "";
+        try {
+            String fileKey = storageService.save(file);
+
+            Optional<Item> event = Optional.ofNullable(_eventService.findById(itemKey));
+
+            if (event.isPresent())
+            {
+                String path = "https://app-cabrera.herokuapp.com/api/v1/files/" + fileKey;
+                event.get().setUrlModelAR(path);
                 Item modified = _eventService.update(event.get());
             }
 
