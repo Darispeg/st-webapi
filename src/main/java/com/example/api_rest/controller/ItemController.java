@@ -92,7 +92,7 @@ public class ItemController {
 
             if (event.isPresent())
             {
-                String path = "https://app-cabrera.herokuapp.com/api/v1/files/" + fileKey;
+                String path = "https://st-webapi-production.up.railway.app/api/v1/files/" + fileKey;
                 event.get().setUrlImage(path);
                 Item modified = _eventService.update(event.get());
             }
@@ -115,7 +115,7 @@ public class ItemController {
 
             if (event.isPresent())
             {
-                String path = "https://app-cabrera.herokuapp.com/api/v1/files/" + fileKey;
+                String path = "https://st-webapi-production.up.railway.app/api/v1/files/" + fileKey;
                 event.get().setUrlModelAR(path);
                 Item modified = _eventService.update(event.get());
             }
