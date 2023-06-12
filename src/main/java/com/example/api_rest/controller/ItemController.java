@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/events")
+@RequestMapping(value = "/api/v1/items")
 public class ItemController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Item> save(@RequestBody Item item)
     {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/events/save").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/items/save").toUriString());
         return ResponseEntity.created(uri).body(_eventService.saveEvent(item));
     }
 
@@ -76,19 +76,19 @@ public class ItemController {
         if (obj.isPresent())
         {
             _eventService.delete(key);
-            return new ResponseEntity<>("Event deleted successfully", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Item deleted successfully", HttpStatus.NO_CONTENT);
         }
         else
-            return new ResponseEntity<>( "Event not found", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( "Item not found", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/{eventKey}/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@PathVariable UUID eventKey, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/{itemKey}/upload")
+    public ResponseEntity<ResponseMessage> uploadFile(@PathVariable UUID itemKey, @RequestParam("file") MultipartFile file) {
         String message = "";
         try {
             String fileKey = storageService.save(file);
 
-            Optional<Item> event = Optional.ofNullable(_eventService.findById(eventKey));
+            Optional<Item> event = Optional.ofNullable(_eventService.findById(itemKey));
 
             if (event.isPresent())
             {
