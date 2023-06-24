@@ -36,8 +36,8 @@ public class WebSecurityConfig {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .anyRequest()
-                .authenticated()
+                .antMatchers("/api/v1/files/**").permitAll() // Permitir acceso sin autenticación a la ruta /api/v1/files/**
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic()
                 .and()
