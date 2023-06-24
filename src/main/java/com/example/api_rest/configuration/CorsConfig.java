@@ -16,6 +16,11 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200")
                             .allowedMethods("*")
+                                .exposedHeaders("*");
+
+                registry.addMapping("/**")
+                        .allowedOrigins("https://64968c200342ec2d516dc49e--cute-pie-bd74e5.netlify.app")
+                            .allowedMethods("*")
                                 .exposedHeaders("*");;
 
                 registry.addMapping("/login")
@@ -24,16 +29,16 @@ public class CorsConfig {
                                                 .exposedHeaders("*");
 
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:4200")
-                        .allowedMethods("*");
+                                .allowedOrigins("http://localhost:4200")
+                                        .allowedMethods("*");
 
                 registry.addMapping("/login")
-                        .allowedOrigins("https://647d67ec78dbed275a7a34de--mellifluous-parfait-83bfcb.netlify.app")
+                        .allowedOrigins("https://64968c200342ec2d516dc49e--cute-pie-bd74e5.netlify.app")
                         .allowedMethods("*")
                         .exposedHeaders("*");
 
                 registry.addMapping("/api/**")
-                        .allowedOrigins("https://647d67ec78dbed275a7a34de--mellifluous-parfait-83bfcb.netlify.app")
+                        .allowedOrigins("https://64968c200342ec2d516dc49e--cute-pie-bd74e5.netlify.app")
                         .allowedMethods("*");
             }
         };
