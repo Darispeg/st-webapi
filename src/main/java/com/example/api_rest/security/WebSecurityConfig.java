@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/files").permitAll()
+                .antMatchers("/api/v1/files/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
