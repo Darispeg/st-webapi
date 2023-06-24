@@ -1,4 +1,4 @@
-package com.example.api_rest.filter.exception;
+package com.example.api_rest.exception;
 
 import com.example.api_rest.model.ResponseMessage;
 import org.springframework.http.HttpStatus;

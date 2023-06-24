@@ -22,14 +22,4 @@ public class ApiRestApplication implements CommandLineRunner {
 	@Override
 	public void run(String... arg) throws Exception {
 	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigure() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:63891").allowedMethods("*").allowedHeaders("*");
-			}
-		};
-	}
 }

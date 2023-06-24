@@ -1,4 +1,4 @@
-package com.example.api_rest.filter.exception;
+package com.example.api_rest.exception;
 
 public class UsernameOrIdNotFound extends Exception{
     public UsernameOrIdNotFound(){

@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,5 +33,10 @@ public class ItemServiceImpl extends GenericServiceImpl<Item, UUID> implements I
     public Item update(Item item) {
         item.setLastModifiedDate(LocalDateTime.now());
         return getDao().save(item);
+    }
+
+    @Override
+    public List<Item> findAllByCategory(String category) {
+        return repository.findAllByCategory(category);
     }
 }

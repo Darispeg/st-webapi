@@ -28,9 +28,6 @@ public class UserServiceImpl extends GenericServiceImpl<User, UUID> implements U
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Override
     public CrudRepository<User, UUID> getDao() {
         return userRepository;
@@ -40,7 +37,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UUID> implements U
     public User saveUser(User obj) {
         obj.setKey(UUID.randomUUID());
 
-        String encodePassword = bCryptPasswordEncoder.encode(obj.getPassword());
+        String encodePassword = new BCryptPasswordEncoder().encode(obj.getPassword());
         obj.setPassword(encodePassword);
 
         obj.setRole(new Role( UUID.randomUUID(), "empty", "SIN ROL"));

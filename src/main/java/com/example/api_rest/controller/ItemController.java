@@ -25,31 +25,41 @@ public class ItemController {
     private FileStorageService storageService;
 
     @Autowired
-    private ItemService _eventService;
+    private ItemService _itemService;
 
     @GetMapping
     public ResponseEntity<List<Item>> getAll()
     {
-        return ResponseEntity.ok(_eventService.findAll());
+        return ResponseEntity.ok(_itemService.findAll());
     }
 
     @GetMapping(value = "/{key}")
     public ResponseEntity<Item> getEvent(@PathVariable UUID key)
     {
-        return ResponseEntity.ok(_eventService.findById(key));
+        return ResponseEntity.ok(_itemService.findById(key));
     }
+
+    @GetMapping(value = "/category")
+    public ResponseEntity<List<Item>> getAllBYCategory(@RequestParam String category)
+    {
+        if (category.isEmpty())
+            return ResponseEntity.ok(_itemService.findAll());
+        else
+            return ResponseEntity.ok(_itemService.findAllByCategory(category));
+    }
+
 
     @PostMapping
     public ResponseEntity<Item> save(@RequestBody Item item)
     {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/items/save").toUriString());
-        return ResponseEntity.created(uri).body(_eventService.saveEvent(item));
+        return ResponseEntity.created(uri).body(_itemService.saveEvent(item));
     }
 
     @PutMapping(value = "/{key}")
     public ResponseEntity<Item> update(@PathVariable UUID key, @RequestBody UpdateItemMapping updateObj)
     {
-        Optional<Item> obj = Optional.ofNullable(_eventService.findById(key));
+        Optional<Item> obj = Optional.ofNullable(_itemService.findById(key));
 
         if (obj.isPresent())
         {
@@ -61,7 +71,7 @@ public class ItemController {
             update.setStock(updateObj.getStock());
             update.setUnitOfMeasurement(updateObj.getUnitOfMeasurement());
 
-            Item modified = _eventService.update(update);
+            Item modified = _itemService.update(update);
             return ResponseEntity.ok(modified);
         }
         else
@@ -71,11 +81,11 @@ public class ItemController {
     @DeleteMapping(value = "/{key}")
     public ResponseEntity<String> delete(@PathVariable UUID key)
     {
-        Optional<Item> obj = Optional.ofNullable(_eventService.findById(key));
+        Optional<Item> obj = Optional.ofNullable(_itemService.findById(key));
 
         if (obj.isPresent())
         {
-            _eventService.delete(key);
+            _itemService.delete(key);
             return new ResponseEntity<>("Item deleted successfully", HttpStatus.NO_CONTENT);
         }
         else
@@ -88,13 +98,13 @@ public class ItemController {
         try {
             String fileKey = storageService.save(file);
 
-            Optional<Item> event = Optional.ofNullable(_eventService.findById(itemKey));
+            Optional<Item> event = Optional.ofNullable(_itemService.findById(itemKey));
 
             if (event.isPresent())
             {
                 String path = "https://st-webapi-production.up.railway.app/api/v1/files/" + fileKey;
                 event.get().setUrlImage(path);
-                Item modified = _eventService.update(event.get());
+                Item modified = _itemService.update(event.get());
             }
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
@@ -111,13 +121,13 @@ public class ItemController {
         try {
             String fileKey = storageService.save(file);
 
-            Optional<Item> event = Optional.ofNullable(_eventService.findById(itemKey));
+            Optional<Item> event = Optional.ofNullable(_itemService.findById(itemKey));
 
             if (event.isPresent())
             {
                 String path = "https://st-webapi-production.up.railway.app/api/v1/files/" + fileKey;
                 event.get().setUrlModelAR(path);
-                Item modified = _eventService.update(event.get());
+                Item modified = _itemService.update(event.get());
             }
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
